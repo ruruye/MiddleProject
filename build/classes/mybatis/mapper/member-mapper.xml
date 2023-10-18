@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 이 문서는 mybatis에서 처리할 SQL문을 작성하는 문서입니다. -->
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="member">
+
+<!--
+    MEM_ID	VARCHAR2(100)		NOT NULL,
+	MEM_PW	VARCHAR2(100)		NOT NULL,
+	MEM_NAME	VARCHAR2(255)		NOT NULL,
+	MEM_TEL	VARCHAR2(15)		NOT NULL,
+	MEM_EMAIL	VARCHAR2(255)		NOT NULL,
+	MEM_ADRS	VARCHAR2(255)		NOT NULL,
+	MEM_JOINDATE	DATE		NOT NULL,
+	MEM_BIR	DATE		NOT NULL,
+-->
+
+    <!-- 회원아이디로 회원정보 찾기 -->
+   <select id="getMember" parameterType="String" resultType="memVO">
+   		SELECT * FROM member WHERE mem_id = #{mem_id} and MEM_DEL = 'N'
+   </select>
+
+    <!-- 회원가입 -->
+    <insert id="joinMember" parameterType="memVO">
+        INSERT INTO member (
+            mem_id, mem_pw, mem_name, mem_tel,
+            mem_email, mem_adrs, mem_joindate, mem_bir, mem_del
+        ) VALUES (
+            #{mem_id}, #{mem_pw}, #{mem_name}, #{mem_tel},
+            #{mem_email}, #{mem_adrs}, sysdate, #{mem_bir}, 'N'
+        )
+    </insert>
+
+    <!-- 로그인 -->
+    <select id="loginMember" parameterType="memVO" resultType="memVO">
+        SELECT * FROM member WHERE mem_id = #{mem_id} AND mem_pw = #{mem_pw} and MEM_DEL = 'N'
+    </select>
+
+    <!-- 회원 수정 id는 수정 불가 -->
+    <update id="updateMember" parameterType="memVO">
+        UPDATE member SET
+        	<if test="mem_pw != null">
+	            mem_pw = #{mem_pw},
+	        </if>
+            mem_name = #{mem_name},
+            mem_tel = #{mem_tel},
+            mem_email = #{mem_email},
+            mem_adrs = #{mem_adrs},
+            mem_bir = #{mem_bir}
+        WHERE mem_id = #{mem_id}
+    </update>
+
+    <!-- 회원 탈퇴 및 삭제 -->
+    <update id="deleteMember" parameterType="memVO">
+        update member set MEM_DEL = 'Y' WHERE mem_id = #{mem_id} AND mem_pw = #{mem_pw}
+    </update>
+
+    <select id="getAuthority" parameterType="kr.or.ddit.member.vo.AuthorityVO" resultType="kr.or.ddit.member.vo.AuthorityVO">
+        SELECT
+            COALESCE(m.mem_id, a.admin_id) AS id,
+            CASE WHEN m.mem_id IS NOT NULL THEN 'member' ELSE 'admin' END AS authority
+        FROM
+            member m
+            FULL OUTER JOIN admin a ON m.mem_id = a.admin_id
+        WHERE
+            (#{id} IN (m.mem_id) AND m.mem_pw= #{password})
+            OR (#{id} IN (a.admin_id) AND a.admin_pw = #{password})
+    </select>
+
+</mapper>

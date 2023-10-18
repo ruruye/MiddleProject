@@ -1,0 +1,165 @@
+body {
+	font-family: Arial, sans-serif;
+	background-color: #f5f9fa;
+}
+
+.bd-placeholder-img {
+	font-size: 1.125rem;
+	text-anchor: middle;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	user-select: none;
+}
+
+@media ( min-width : 768px) {
+	.bd-placeholder-img-lg {
+		font-size: 3.5rem;
+	}
+}
+
+.b-example-divider {
+	height: 3rem;
+	background-color: rgba(0, 0, 0, .1);
+	border: solid rgba(0, 0, 0, .15);
+	border-width: 1px 0;
+	box-shadow: inset 0 .5em 1.5em rgba(0, 0, 0, .1), inset 0 .125em .5em
+		rgba(0, 0, 0, .15);
+}
+
+.b-example-vr {
+	flex-shrink: 0;
+	width: 1.5rem;
+	height: 100vh;
+}
+
+.bi {
+	vertical-align: -.125em;
+	fill: currentColor;
+}
+.fixed-top {
+	background: white;
+    color: #111 !important;
+    box-shadow: 0px 5px 50px rgba(0,0,0,0.1);
+}
+.nav-scroller {
+	position: relative;
+	z-index: 2;
+	height: 2.75rem;
+	overflow-y: hidden;
+}
+
+.nav-scroller .nav {
+	display: flex;
+	flex-wrap: nowrap;
+	padding-bottom: 1rem;
+	margin-top: -1px;
+	overflow-x: auto;
+	text-align: center;
+	white-space: nowrap;
+	-webkit-overflow-scrolling: touch;
+}
+
+/* --- */
+.logo {
+	width: 50px;
+	height: 50px;
+}
+
+header a {
+	font-size: 1.5rem;
+	text-decoration: none;
+	color: #111;
+	font-weight: bold;
+	letter-spacing: 2px;
+	text-align: center;
+}
+
+header #hUser {
+	cursor: default;
+	user-select: none;
+	pointer-events: none;
+	color: inherit;
+	text-decoration: none;
+	color: white;
+}
+
+header #hUser:hover {
+	color: initial; /* 초기 스타일로 변경 */
+}
+
+.d-flex {
+	width: 450px;
+}
+
+.text-center {
+	text-align: center;
+}
+
+.container-fluid1 {
+	display: flex;
+	flex-wrap: inherit;
+	align-items: center;
+	justify-content: center;
+	margin-left: 50px;
+}
+
+.hidden1 {
+	color: #212529;
+}
+
+.book {
+	width: 210px;
+	height: 300px;
+}
+
+.carousel-inner {
+	height: 400px;
+}
+
+.float-first:link {
+	text-decoration: none;
+	color: white;
+}
+
+
+.flexB{
+  display: flex;
+  justify-content: space-between;
+}
+
+#footer {
+  width: 100%;
+  background-color: #cdcdcd;
+  color: black;    
+  box-shadow: 0px -5px 50px rgba(0,0,0,0.075);
+}
+
+#footercon {
+  display: flex;
+  flex-direction: column;
+  padding: 20px 80px 10px;
+  margin-top: 30px;
+}
+
+#footercon p {
+  margin-bottom: 10px;
+  color: black;
+}
+
+#footercon a {
+  font-weight: bold;
+  margin-bottom: 0px;
+  color: black;
+}
+
+#footercon a:hover {
+	color: red;
+}
+
+#footercon img {
+  height: 30px;
+  margin-bottom: 10px;
+  margin-right: 0;
+  align-self: flex-end;
+}
+

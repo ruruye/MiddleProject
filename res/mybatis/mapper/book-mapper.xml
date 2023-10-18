@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 이 문서는 mybatis에서 처리할 SQL문을 작성하는 문서입니다. -->
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="book">
+
+<!--
+    BOOK_ID	VARCHAR2(50)		NOT NULL,
+	BOOK_TIT 	VARCHAR2(255)		NOT NULL,
+	BOOK_AUTHOR	VARCHAR2(255)			NOT NULL,
+	BOOK_PUBLI	VARCHAR2(255)			NOT NULL,
+	BOOK_PUBLIDATE	DATE			NOT NULL,
+	BOOK_GENRE	VARCHAR2(50)			NOT NULL,
+	BOOK_ISBN	VARCHAR2(50)			NOT NULL,
+	BOOK_YN	CHAR(2)		DEFAULT 'N'	NOT NULL,
+	BOOK_PRICE	NUMBER(20)			NOT NULL,
+	BOOK_CALLSIGN	VARCHAR2(50)		NOT NULL,
+	BOOK_IMG	VARCHAR2(100)		NULL,
+ -->
+
+    <!-- 도서 전체 목록 -->
+   <select id="bookList" resultType="bookVO">
+   		SELECT * FROM book
+   </select>
+   
+   <!-- 메인 도서 목록 -->
+   <select id="bookListNine" resultType="bookVO">
+   		SELECT * FROM book
+  			 WHERE ROWNUM &lt;= 9
+   </select>
+
+    <!-- 도서 세부 사항 -->
+    <select id="bookDetail" parameterType="String" resultType="bookVO">
+        SELECT * FROM book WHERE book_id = #{book_id}
+    </select>
+
+    <!-- 도서 입고 book_id/book_yn 제외 -->
+    <insert id="bookInsert" parameterType="bookVO">
+        INSERT INTO book (
+            book_tit, book_author, book_publi, book_publidate,
+            book_genre, book_isbn, book_price, book_callsign, book_img
+        ) VALUES (
+            #{book_tit}, #{book_author}, #{book_publi}, #{book_publidate},
+            #{book_genre}, #{book_isbn}, #{book_price}, #{book_callsign}, #{book_img}
+        )
+    </insert>
+
+    <!-- 도서 수정 book_id는 수정 불가 -->
+	<update id="bookUpdate" parameterType="bookVO">
+	    UPDATE book SET
+	        book_tit = #{book_tit},
+	        book_author = #{book_author},
+	        book_publi = #{book_publi},
+	        book_publidate = #{book_publidate},
+	        book_genre = #{book_genre},
+	        book_isbn = #{book_isbn},
+	        book_price = #{book_price},
+	        book_callsign = #{book_callsign}
+	        <if test="book_img != null">
+	            , book_img = #{book_img}
+	        </if>
+	    WHERE book_id = #{book_id}
+	</update>
+
+    <!-- 도서 삭제 -->
+    <delete id="bookDelete" parameterType="String">
+        DELETE FROM book WHERE book_id = #{book_id}
+    </delete>
+    
+    <!-- 도서 검색 -->
+    <sql id="dynamicCondition">
+	 <where>
+	   <if test="!(searchWord == '')">
+	     AND BOOK_TIT LIKE '%' || #{title} || '%'
+	   </if>
+	 </where>
+	</sql>
+	
+	<select id="searchBook" resultType="bookVO" parameterType="map">
+	  <!--select * from notice
+	           where title like '%' || #{title} || '%'-->
+	  SELECT A.*
+		FROM (
+		    SELECT rownum AS rnum, B.*
+		    FROM (
+		        SELECT *
+		        FROM BOOK
+		        WHERE 1=1
+		        <if test="!(searchWord == '')">
+		            AND BOOK_TIT LIKE '%' || #{searchWord} || '%'
+		        </if>
+		        ORDER BY BOOK_PUBLIDATE DESC
+		    ) B 
+		    WHERE rownum &lt;= #{end}
+		) A	
+		WHERE A.rnum &gt;= #{start}
+	</select>
+	
+	<select id="totalCount" resultType="int" parameterType="map">
+		select count(*) from book
+         	<include refid="dynamicCondition"/> 
+	</select>
+
+</mapper>

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="comment">
+
+<!-- 댓글 등록하기 -->
+<insert id="insertComment" parameterType="commentVO">
+	insert into comment_table(admin_id, post_id, comm_cn, comm_date) 
+	values( #{admin_id}, #{post_id}, #{comm_cn}, sysdate)
+</insert>
+
+<!-- 댓글 가져오기 (부분) -->
+<select id="getCommentDetail" resultType="commentVO" parameterType="int">
+    select * from comment_table where post_id=#{post_id}
+</select>
+
+
+</mapper>

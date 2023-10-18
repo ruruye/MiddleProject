@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 이 문서는 mybatis에서 처리할 SQL문을 작성하는 문서입니다. -->
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+        
+<mapper namespace="post">
+
+<!-- 
+    POST_ID	       NUMBER   NOT NULL,
+	MEM_ID	       VARCHAR2(100 BYTE)  NOT NULL,	 
+	POST_TIT	   VARCHAR2(255 BYTE)  NOT NULL,	
+	POST_CN	       CLOB	               NOT NULL,
+	POST_DATE	   DATE	               NOT NULL,
+	POST_RDCNT	   NUMBER	           NOT NULL,
+	POST_CATEGORY  VARCHAR2(100 BYTE)  NOT NULL	
+ -->
+
+<!-- 게시글 작성하기 -->
+<insert id="insertPost" parameterType="postVO">
+  INSERT INTO POSTS ( MEM_ID, POST_TIT, POST_CN, POST_DATE, POST_RDCNT, POST_CATEGORY)
+  VALUES ( #{mem_id}, #{post_tit}, #{post_cn}, sysdate, 0, #{post_category})
+</insert>
+
+
+<!-- 게시글 전체 가져오기 -->
+<select id="getAllPost" resultType="postVO">
+   select * from posts  order by post_id desc
+</select>
+
+
+<!--  게시글 삭제하기 -->
+<delete id="deletePost" parameterType="postVO">
+   delete from posts where post_id = #{post_id}
+</delete>
+
+
+<!-- 부분 게시글 가져오기 -->
+<select id="getPostDetail" resultType="postVO" parameterType="int">
+   select post_tit, post_cn, post_date, mem_id from posts where post_id=#{post_id}
+</select>
+
+<!-- 공지사항 검색하기 -->
+
+<!-- 동적쿼리 -->
+<sql id="dynamicCondition">
+ <where>
+   <if test="!(searchWord == '')">
+     AND POST_TIT LIKE '%' || #{title} || '%'
+   </if>
+ </where>
+</sql>
+
+<select id="searchPost" resultType="postVO" parameterType="map">
+  <!--select * from posts
+           where title like '%' || #{title} || '%'-->
+  SELECT A.*
+	FROM (
+	    SELECT rownum AS rnum, B.*
+	    FROM (
+	        SELECT *
+	        FROM POSTS
+	        WHERE 1=1
+	        <if test="!(searchWord == '')">
+	            AND POST_TIT LIKE '%' || #{searchWord} || '%'
+	        </if>
+	        ORDER BY POST_DATE DESC
+	    ) B 
+	    WHERE rownum &lt;= #{end}
+	) A
+	WHERE A.rnum &gt;= #{start}
+</select>
+
+<!-- 전체 글 개수 구하기-->
+<select id="totalCount" resultType="int" parameterType="map">
+	  select count(*) from posts
+	  	<include refid="dynamicCondition"/>
+</select>
+
+<update id="updateRdcnt" parameterType="int">
+      update posts set post_rdcnt = post_rdcnt +1
+                where num = #{num}
+</update>
+
+
+</mapper>
